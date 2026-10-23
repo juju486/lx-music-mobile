@@ -5,6 +5,7 @@ import {
 } from '@/utils/data'
 import { updateListMusics } from '@/core/list'
 import settingState from '@/store/setting/state'
+import { getDownloadedMusicPath } from '@/utils/downloadStore'
 
 import {
   buildLyricInfo,
@@ -46,6 +47,10 @@ export const getMusicUrl = async({ musicInfo, quality, isRefresh, allowToggleSou
   allowToggleSource?: boolean
   onToggleSource?: (musicInfo?: LX.Music.MusicInfoOnline) => void
 }): Promise<string> => {
+  if (!isRefresh) {
+    const downloadedPath = await getDownloadedMusicPath(musicInfo)
+    if (downloadedPath) return downloadedPath
+  }
   // if (!musicInfo._types[type]) {
   //   // 兼容旧版酷我源搜索列表过滤128k音质的bug
   //   if (!(musicInfo.source == 'kw' && type == '128k')) throw new Error('该歌曲没有可播放的音频')

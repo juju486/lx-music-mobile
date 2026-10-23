@@ -12,6 +12,7 @@ import { type Metadata } from '@/components/MetadataEditModal'
 import musicSdk from '@/utils/musicSdk'
 import { getListMusicSync } from '@/utils/listManage'
 import { clearMusicUrlByMusic } from '@/utils/data'
+import { downloadMusic } from '@/utils/downloadMusic'
 
 export const handlePlay = (listId: SelectInfo['listId'], index: SelectInfo['index']) => {
   void playList(listId, index)
@@ -126,6 +127,25 @@ export const clearMusicUrl = async(musicInfo: SelectInfo['musicInfo']) => {
     return
   }
   toast(global.i18n.t('list_remove_cache_success_tip'))
+}
+
+export const handleDownload = async(musicInfo: SelectInfo['musicInfo'], selectedList: SelectInfo['selectedList']) => {
+  const musics = selectedList.length ? selectedList : [musicInfo]
+  let successCount = 0
+  let failCount = 0
+  for (const music of musics) {
+    try {
+      await downloadMusic(music)
+      successCount++
+    } catch {
+      failCount++
+    }
+  }
+  if (failCount) {
+    toast(`已下载 ${successCount} 首，${failCount} 首失败`)
+  } else {
+    toast(`下载完成（${successCount} 首）`)
+  }
 }
 
 
